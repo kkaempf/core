@@ -566,8 +566,7 @@ static void GetNameInfo3(EvalContext *ctx)
     EvalContextVariablePutSpecial(ctx, SPECIAL_SCOPE_SYS, "masterdir", GetMasterDir(), CF_DATA_TYPE_STRING, "source=agent");
     EvalContextVariablePutSpecial(ctx, SPECIAL_SCOPE_SYS, "inputdir", GetInputDir(), CF_DATA_TYPE_STRING, "source=agent");
 
-    snprintf(workbuf, CF_BUFSIZE, "%s%cbin", CFWORKDIR, FILE_SEPARATOR);
-    EvalContextVariablePutSpecial(ctx, SPECIAL_SCOPE_SYS, "bindir", workbuf, CF_DATA_TYPE_STRING, "source=agent");
+    EvalContextVariablePutSpecial(ctx, SPECIAL_SCOPE_SYS, "bindir", "/usr/sbin", CF_DATA_TYPE_STRING, "source=agent");
 
     snprintf(workbuf, CF_BUFSIZE, "%s%cfailsafe.cf", GetInputDir(), FILE_SEPARATOR);
     EvalContextVariablePutSpecial(ctx, SPECIAL_SCOPE_SYS, "failsafe_policy_path", workbuf, CF_DATA_TYPE_STRING, "source=agent");
@@ -612,7 +611,7 @@ static void GetNameInfo3(EvalContext *ctx)
                      components[i]);
         }
 #else
-        snprintf(name, CF_MAXVARSIZE - 1, "%s%cbin%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, components[i]);
+        snprintf(name, CF_MAXVARSIZE - 1, "/usr/sbin/%s", components[i]);
 #endif
 
         have_component[i] = false;
@@ -635,7 +634,7 @@ static void GetNameInfo3(EvalContext *ctx)
         snprintf(name, CF_MAXVARSIZE - 1, "%s%cbin%c%s.exe", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR,
                  components[1]);
 #else
-        snprintf(name, CF_MAXVARSIZE - 1, "%s%cbin%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, components[1]);
+        snprintf(name, CF_MAXVARSIZE - 1, "/usr/sbin/%s", components[1]);
 #endif
 
         if (stat(name, &sb) != -1)
