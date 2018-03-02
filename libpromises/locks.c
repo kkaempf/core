@@ -114,7 +114,7 @@ static inline void log_lock(const char *op,
     }
 }
 
-static void GenerateMd5Hash(const char *istring, char *ohash)
+static void GenerateSha256Hash(const char *istring, char *ohash)
 {
     if (!strcmp(istring, "CF_CRITICAL_SECTION"))
     { 
@@ -123,15 +123,15 @@ static void GenerateMd5Hash(const char *istring, char *ohash)
     }
 
     unsigned char digest[EVP_MAX_MD_SIZE + 1];
-    HashString(istring, strlen(istring), digest, HASH_METHOD_MD5);
+    HashString(istring, strlen(istring), digest, HASH_METHOD_SHA256);
 
     const char lookup[]="0123456789abcdef";
-    for (int i=0; i<16; i++)
+    for (int i=0; i<32; i++)
     {
         ohash[i*2]   = lookup[digest[i] >> 4];
         ohash[i*2+1] = lookup[digest[i] & 0xf];
     }
-    ohash[16*2] = '\0';
+    ohash[32*2] = '\0';
 
     if (!strncmp(istring, "lock.track_license_bundle.track_license", 39))
     {
@@ -153,7 +153,7 @@ static bool WriteLockData(CF_DB *dbp, const char *lock_id, LockData *lock_data)
     }
     else
     {
-        GenerateMd5Hash(lock_id, digest2);
+        GenerateSha256Hash(lock_id, digest2);
     }
 
     LOG_LOCK_ENTRY(lock_id, digest2, lock_data);
@@ -192,7 +192,7 @@ time_t FindLockTime(const char *name)
 
 #ifdef LMDB
     unsigned char ohash[EVP_MAX_MD_SIZE*2 + 1];
-    GenerateMd5Hash(name, ohash);
+    GenerateSha256Hash(name, ohash);
 
     LOG_LOCK_ENTRY(name, ohash, &entry);
     ret = ReadDB(dbp, ohash, &entry, sizeof(entry));
@@ -297,7 +297,7 @@ static int RemoveLock(const char *name)
     }
     else
     {
-        GenerateMd5Hash(name, digest2);
+        GenerateSha256Hash(name, digest2);
     }
 
     LOG_LOCK_ENTRY(name, digest2, NULL);
@@ -372,7 +372,7 @@ static pid_t FindLockPid(char *name)
 
 #ifdef LMDB
     unsigned char ohash[EVP_MAX_MD_SIZE*2 + 1];
-    GenerateMd5Hash(name, ohash);
+    GenerateSha256Hash(name, ohash);
 
     LOG_LOCK_ENTRY(name, ohash, &entry);
     ret = ReadDB(dbp, ohash, &entry, sizeof(entry));
@@ -515,7 +515,7 @@ static bool KillLockHolder(const char *lock)
 
 #ifdef LMDB
     unsigned char ohash[EVP_MAX_MD_SIZE*2 + 1];
-    GenerateMd5Hash(lock, ohash);
+    GenerateSha256Hash(lock, ohash);
 
     LOG_LOCK_ENTRY(lock, ohash, &lock_data);
     ret = ReadDB(dbp, ohash, &lock_data, sizeof(lock_data));
