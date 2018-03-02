@@ -1459,7 +1459,6 @@ fi
 # Populate contents of config.post.h
 #
 AC_SUBST(post_macros)
-AM_SUBST_NOTMAKE(post_macros)
 
 dnl ######################################################################
 dnl Summarize
