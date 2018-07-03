@@ -6,4 +6,6 @@ then
     exit 0;
 fi
 
+text -x ~/.cfagent/state || mkdir -p ~/.cfagent/state
+
 ./lastseen_threaded_load -c 1   4 1 1
