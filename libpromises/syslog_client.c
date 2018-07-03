@@ -111,7 +111,7 @@ void RemoteSysLog(int log_priority, const char *log_string)
             char message[rfc3164_len];
             char timebuffer[26];
             pid_t pid = getpid();
-
+            // rfc3164_len is WAY too small
             snprintf(message, sizeof(message), "<%i>%.15s %s %s[%d]: %s",
                      log_priority | SYSLOG_FACILITY,
                      cf_strtimestamp_local(now, timebuffer) + 4,

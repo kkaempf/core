@@ -9,7 +9,7 @@
 
 /* Global variables we care about */
 
-char VFQNAME[CF_MAXVARSIZE];
+char VFQNAME[CF_BUFSIZE];
 char VUQNAME[CF_MAXVARSIZE];
 char VDOMAIN[CF_MAXVARSIZE];
 

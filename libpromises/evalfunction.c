@@ -496,7 +496,7 @@ static Rlist *GetHostsFromLastseenDB(Item *addresses, time_t horizon, bool retur
     Item *ip;
     time_t now = time(NULL);
     double entrytime;
-    char address[CF_MAXVARSIZE];
+    char address[CF_BUFSIZE];
 
     for (ip = addresses; ip != NULL; ip = ip->next)
     {

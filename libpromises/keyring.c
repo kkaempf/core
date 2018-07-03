@@ -83,9 +83,9 @@ int RemovePublicKey(const char *id)
 
         if (c && c[strlen(suffix)] == '\0')     /* dirp->d_name ends with suffix */
         {
-            char keyfilename[CF_BUFSIZE];
+            char keyfilename[CF_BUFSIZE * 2];
 
-            snprintf(keyfilename, CF_BUFSIZE, "%s/%s", keysdir, dirp->d_name);
+            snprintf(keyfilename, CF_BUFSIZE * 2, "%s/%s", keysdir, dirp->d_name);
             MapName(keyfilename);
 
             if (unlink(keyfilename) < 0)

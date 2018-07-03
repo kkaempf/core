@@ -333,7 +333,7 @@ promise_type   [a-zA-Z_]+:
                           {
                               yyerror("identifier too long");
                           }
-                          strncpy(P.currentid, yytext, CF_MAXVARSIZE);
+                          strncpy(P.currentid, yytext, CF_MAXVARSIZE-1);
                           return IDSYNTAX;
                       }
 
@@ -346,7 +346,7 @@ promise_type   [a-zA-Z_]+:
                           {
                               yyerror("qualified identifier too long");
                           }
-                          strncpy(P.currentid, yytext, CF_MAXVARSIZE);
+                          strncpy(P.currentid, yytext, CF_MAXVARSIZE-1);
                           return IDSYNTAX;
                       }
 
@@ -440,7 +440,7 @@ promise_type   [a-zA-Z_]+:
 
                           tmp = xstrdup(yytext);
                           tmp[yyleng - 1] = '\0';
-                          strncpy(P.currenttype, tmp, CF_MAXVARSIZE);
+                          strncpy(P.currenttype, tmp, CF_MAXVARSIZE-1);
 
                           if (P.currentclasses != NULL)
                           {

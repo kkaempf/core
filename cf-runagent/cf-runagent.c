@@ -794,15 +794,15 @@ static void HailExec(AgentConnection *conn, char *peer)
 static FILE *NewStream(char *name)
 {
     FILE *fp;
-    char filename[CF_BUFSIZE];
+    char filename[CF_BUFSIZE * 2];
 
     if (OUTPUT_DIRECTORY[0] != '\0')
     {
-        snprintf(filename, CF_BUFSIZE, "%s/%s_runagent.out", OUTPUT_DIRECTORY, name);
+        snprintf(filename, sizeof(filename), "%s/%s_runagent.out", OUTPUT_DIRECTORY, name);
     }
     else
     {
-        snprintf(filename, CF_BUFSIZE, "%s%coutputs%c%s_runagent.out",
+        snprintf(filename, sizeof(filename), "%s%coutputs%c%s_runagent.out",
                  GetWorkDir(), FILE_SEPARATOR, FILE_SEPARATOR, name);
     }
 

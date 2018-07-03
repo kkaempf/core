@@ -6,7 +6,7 @@
 #include <syslog_client.h>
 #include <string_lib.h>
 
-char VFQNAME[CF_MAXVARSIZE];
+char VFQNAME[CF_BUFSIZE];
 char VPREFIX[CF_MAXVARSIZE];
 
 static struct sockaddr *got_address;

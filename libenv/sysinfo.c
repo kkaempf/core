@@ -443,7 +443,7 @@ static void GetNameInfo3(EvalContext *ctx)
     };
     int have_component[COMPONENTS_SIZE];
     struct stat sb;
-    char name[CF_MAXVARSIZE], quoteName[CF_MAXVARSIZE], shortname[CF_MAXVARSIZE];
+    char name[CF_MAXVARSIZE], quoteName[CF_BUFSIZE], shortname[CF_MAXVARSIZE];
 
     if (uname(&VSYSNAME) == -1)
     {
@@ -2064,7 +2064,7 @@ static int Linux_Suse_Version(EvalContext *ctx)
         strncpy(classbuf, vendor, CF_MAXVARSIZE);
         EvalContextClassPutHard(ctx, classbuf, "inventory,attribute_name=none,source=agent");
         snprintf(classbuf + strlen(classbuf), CF_MAXVARSIZE - strlen(classbuf), "_%d", major);
-        SetFlavour(ctx, classbuf);
+        SetFlavor(ctx, classbuf);
         if (minor != -1)
         {
             snprintf(classbuf + strlen(classbuf), CF_MAXVARSIZE - strlen(classbuf), "_%d", minor);
@@ -2177,7 +2177,7 @@ static void LinuxDebianSanitizeIssue(char *buffer)
 
 static int Linux_Misc_Version(EvalContext *ctx)
 {
-    char flavor[CF_MAXVARSIZE];
+    char flavor[CF_BUFSIZE];
     char version[CF_MAXVARSIZE];
     char os[CF_MAXVARSIZE];
     char buffer[CF_BUFSIZE];
@@ -2218,7 +2218,7 @@ static int Linux_Misc_Version(EvalContext *ctx)
 
     if (*os && *version)
     {
-        snprintf(flavor, CF_MAXVARSIZE, "%s_%s", os, version);
+        snprintf(flavor, CF_BUFSIZE, "%s_%s", os, version);
         SetFlavor(ctx, flavor);
         return 1;
     }
@@ -2233,7 +2233,7 @@ static int Linux_Debian_Version(EvalContext *ctx)
     int major = -1;
     int release = -1;
     int result;
-    char classname[CF_MAXVARSIZE], buffer[CF_MAXVARSIZE], os[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
+    char classname[CF_BUFSIZE], buffer[CF_BUFSIZE], os[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
 
     Log(LOG_LEVEL_VERBOSE, "This appears to be a debian system.");
     EvalContextClassPutHard(ctx, "debian", "inventory,attribute_name=none,source=agent");
@@ -2253,15 +2253,15 @@ static int Linux_Debian_Version(EvalContext *ctx)
     {
     case 2:
         Log(LOG_LEVEL_VERBOSE, "This appears to be a Debian %u.%u system.", major, release);
-        snprintf(classname, CF_MAXVARSIZE, "debian_%u_%u", major, release);
+        snprintf(classname, CF_BUFSIZE, "debian_%u_%u", major, release);
         EvalContextClassPutHard(ctx, classname, "inventory,attribute_name=none,source=agent");
-        snprintf(classname, CF_MAXVARSIZE, "debian_%u", major);
+        snprintf(classname, CF_BUFSIZE, "debian_%u", major);
         SetFlavor(ctx, classname);
         break;
 
     case 1:
         Log(LOG_LEVEL_VERBOSE, "This appears to be a Debian %u system.", major);
-        snprintf(classname, CF_MAXVARSIZE, "debian_%u", major);
+        snprintf(classname, CF_BUFSIZE, "debian_%u", major);
         SetFlavor(ctx, classname);
         break;
 
@@ -2270,7 +2270,7 @@ static int Linux_Debian_Version(EvalContext *ctx)
         sscanf(buffer, "%25[^/]", version);
         if (strlen(version) > 0)
         {
-            snprintf(classname, CF_MAXVARSIZE, "debian_%s", version);
+            snprintf(classname, CF_BUFSIZE, "debian_%s", version);
             EvalContextClassPutHard(ctx, classname, "inventory,attribute_name=none,source=agent");
         }
         break;
@@ -2288,7 +2288,7 @@ static int Linux_Debian_Version(EvalContext *ctx)
     {
         LinuxDebianSanitizeIssue(buffer);
         sscanf(buffer, "%*s %*s %[^./]", version);
-        snprintf(buffer, CF_MAXVARSIZE, "debian_%s", version);
+        snprintf(buffer, CF_BUFSIZE, "debian_%s", version);
         EvalContextClassPutHard(ctx, "debian", "inventory,attribute_name=none,source=agent");
         SetFlavor(ctx, buffer);
     }
@@ -2296,12 +2296,12 @@ static int Linux_Debian_Version(EvalContext *ctx)
     {
         LinuxDebianSanitizeIssue(buffer);
         sscanf(buffer, "%*s %[^.].%d", version, &release);
-        snprintf(buffer, CF_MAXVARSIZE, "ubuntu_%s", version);
+        snprintf(buffer, CF_BUFSIZE, "ubuntu_%s", version);
         SetFlavor(ctx, buffer);
         EvalContextClassPutHard(ctx, "ubuntu", "inventory,attribute_name=none,source=agent");
         if (release >= 0)
         {
-            snprintf(buffer, CF_MAXVARSIZE, "ubuntu_%s_%d", version, release);
+            snprintf(buffer, CF_BUFSIZE, "ubuntu_%s_%d", version, release);
             EvalContextClassPutHard(ctx, buffer, "inventory,attribute_name=none,source=agent");
         }
     }
@@ -2515,13 +2515,13 @@ static int EOS_Version(EvalContext *ctx)
     {
         if (strstr(buffer, "EOS"))
         {
-            char version[CF_MAXVARSIZE], class[CF_MAXVARSIZE];
+            char version[CF_MAXVARSIZE], class[CF_BUFSIZE];
             EvalContextClassPutHard(ctx, "eos", "inventory,attribute_name=none,source=agent");
             EvalContextClassPutHard(ctx, "arista", "source=agent");
             version[0] = '\0';
             sscanf(buffer, "%*s %*s %*s %s", version);
             CanonifyNameInPlace(version);
-            snprintf(class, CF_MAXVARSIZE, "eos_%s", version);
+            snprintf(class, CF_BUFSIZE, "eos_%s", version);
             EvalContextClassPutHard(ctx, class, "inventory,attribute_name=none,source=agent");
         }
     }
@@ -2541,14 +2541,14 @@ static int MiscOS(EvalContext *ctx)
     {
        if (strstr(buffer, "BIG-IP"))
        {
-           char version[CF_MAXVARSIZE], build[CF_MAXVARSIZE], class[CF_MAXVARSIZE];
+           char version[CF_MAXVARSIZE], build[CF_MAXVARSIZE], class[CF_BUFSIZE];
            EvalContextClassPutHard(ctx, "big_ip", "inventory,attribute_name=none,source=agent");
            sscanf(buffer, "%*s %s %*s %s", version, build);
            CanonifyNameInPlace(version);
            CanonifyNameInPlace(build);
-           snprintf(class, CF_MAXVARSIZE, "big_ip_%s", version);
+           snprintf(class, CF_BUFSIZE, "big_ip_%s", version);
            EvalContextClassPutHard(ctx, class, "inventory,attribute_name=none,source=agent");
-           snprintf(class, CF_MAXVARSIZE, "big_ip_%s_%s", version, build);
+           snprintf(class, CF_BUFSIZE, "big_ip_%s_%s", version, build);
            EvalContextClassPutHard(ctx, class, "inventory,attribute_name=none,source=agent");
            SetFlavor(ctx, "BIG-IP");
        }
@@ -2561,7 +2561,8 @@ static int MiscOS(EvalContext *ctx)
 
 static int VM_Version(EvalContext *ctx)
 {
-    char *sp, buffer[CF_BUFSIZE], classbuf[CF_BUFSIZE], version[CF_BUFSIZE];
+#define CF_CLASSBUFSIZE 2*CF_BUFSIZE
+    char *sp, buffer[CF_BUFSIZE], classbuf[CF_CLASSBUFSIZE], version[CF_BUFSIZE];
     int major, minor, bug;
     int sufficient = 0;
 
@@ -2573,17 +2574,17 @@ static int VM_Version(EvalContext *ctx)
     {
         if (sscanf(buffer, "VMware ESX Server %d.%d.%d", &major, &minor, &bug) > 0)
         {
-            snprintf(classbuf, CF_BUFSIZE, "VMware ESX Server %d", major);
+            snprintf(classbuf, CF_CLASSBUFSIZE, "VMware ESX Server %d", major);
             EvalContextClassPutHard(ctx, classbuf, "inventory,attribute_name=none,source=agent");
-            snprintf(classbuf, CF_BUFSIZE, "VMware ESX Server %d.%d", major, minor);
+            snprintf(classbuf, CF_CLASSBUFSIZE, "VMware ESX Server %d.%d", major, minor);
             EvalContextClassPutHard(ctx, classbuf, "inventory,attribute_name=none,source=agent");
-            snprintf(classbuf, CF_BUFSIZE, "VMware ESX Server %d.%d.%d", major, minor, bug);
+            snprintf(classbuf, CF_CLASSBUFSIZE, "VMware ESX Server %d.%d.%d", major, minor, bug);
             EvalContextClassPutHard(ctx, classbuf, "inventory,attribute_name=none,source=agent");
             sufficient = 1;
         }
         else if (sscanf(buffer, "VMware ESX Server %s", version) > 0)
         {
-            snprintf(classbuf, CF_BUFSIZE, "VMware ESX Server %s", version);
+            snprintf(classbuf, CF_CLASSBUFSIZE, "VMware ESX Server %s", version);
             EvalContextClassPutHard(ctx, classbuf, "inventory,attribute_name=none,source=agent");
             sufficient = 1;
         }

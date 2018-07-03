@@ -195,7 +195,7 @@ void LocalExec(const ExecConfig *config)
     strlcpy(esc_command, MapName(cmd), CF_BUFSIZE);
 
 
-    char filename[CF_BUFSIZE];
+    char filename[CF_BUFSIZE * 3];
     {
         char line[CF_BUFSIZE];
         snprintf(line, CF_BUFSIZE, "_%jd_%s", (intmax_t) starttime, CanonifyName(ctime(&starttime)));
@@ -205,7 +205,7 @@ void LocalExec(const ExecConfig *config)
             strlcpy(canonified_fq_name, config->fq_name, CF_BUFSIZE);
             CanonifyNameInPlace(canonified_fq_name);
 
-            snprintf(filename, CF_BUFSIZE, "%s/outputs/cf_%s_%s_%p",
+            snprintf(filename, sizeof(filename), "%s/outputs/cf_%s_%s_%p",
                      GetWorkDir(), canonified_fq_name, line, thread_name);
 
             MapName(filename);

@@ -936,7 +936,7 @@ static double SetClasses(EvalContext *ctx, char *name, double variable, double a
     {
         Log(LOG_LEVEL_DEBUG, "No sigma variation .. can't measure class");
 
-        snprintf(buffer, CF_MAXVARSIZE, "entropy_%s.*", name);
+        snprintf(buffer, sizeof(buffer), "entropy_%s.*", name);
         MonEntropyPurgeUnused(buffer);
 
         return sig;
@@ -1044,13 +1044,13 @@ static void SetVariable(char *name, double value, double average, double stddev,
 {
     char var[CF_BUFSIZE];
 
-    snprintf(var, CF_MAXVARSIZE, "value_%s=%.2lf", name, value);
+    snprintf(var, sizeof(var), "value_%s=%.2lf", name, value);
     AppendItem(classlist, var, "");
 
-    snprintf(var, CF_MAXVARSIZE, "av_%s=%.2lf", name, average);
+    snprintf(var, sizeof(var), "av_%s=%.2lf", name, average);
     AppendItem(classlist, var, "");
 
-    snprintf(var, CF_MAXVARSIZE, "dev_%s=%.2lf", name, stddev);
+    snprintf(var, sizeof(var), "dev_%s=%.2lf", name, stddev);
     AppendItem(classlist, var, "");
 }
 

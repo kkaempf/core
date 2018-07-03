@@ -203,7 +203,7 @@ static char *GetLockNameExec(Attributes a, const Promise *pp)
 static ActionResult RepairExec(EvalContext *ctx, Attributes a,
                                const Promise *pp, PromiseResult *result)
 {
-    char eventname[CF_BUFSIZE];
+    char eventname[CF_BUFSIZE * 2];
     char cmdline[CF_BUFSIZE];
     char comm[20];
     int outsourced, count = 0;
@@ -456,7 +456,7 @@ static ActionResult RepairExec(EvalContext *ctx, Attributes a,
     umask(maskval);
 #endif
 
-    snprintf(eventname, CF_BUFSIZE - 1, "Exec(%s)", cmdline);
+    snprintf(eventname, CF_BUFSIZE*2 - 1, "Exec(%s)", cmdline);
 
 #ifndef __MINGW32__
     if ((a.transaction.background) && outsourced)

@@ -370,8 +370,8 @@ static void AbortTransfer(ConnectionInfo *connection, char *filename)
 {
     Log(LOG_LEVEL_VERBOSE, "Aborting transfer of file due to source changes");
 
-    char sendbuffer[CF_BUFSIZE];
-    snprintf(sendbuffer, CF_BUFSIZE, "%s%s: %s",
+    char sendbuffer[CF_BUFSIZE*2];
+    snprintf(sendbuffer, sizeof(sendbuffer), "%s%s: %s",
              CF_CHANGEDSTR1, CF_CHANGEDSTR2, filename);
 
     if (SendTransaction(connection, sendbuffer, 0, CF_DONE) == -1)
@@ -385,9 +385,9 @@ static void FailedTransfer(ConnectionInfo *connection)
 {
     Log(LOG_LEVEL_VERBOSE, "Transfer failure");
 
-    char sendbuffer[CF_BUFSIZE];
+    char sendbuffer[CF_BUFSIZE*2];
 
-    snprintf(sendbuffer, CF_BUFSIZE, "%s", CF_FAILEDSTR);
+    snprintf(sendbuffer, sizeof(sendbuffer), "%s", CF_FAILEDSTR);
 
     if (SendTransaction(connection, sendbuffer, 0, CF_DONE) == -1)
     {
@@ -419,7 +419,7 @@ void CfGetFile(ServerFileGetState *args)
     {
         Log(LOG_LEVEL_INFO, "REFUSE access to file: %s", filename);
         RefuseAccess(args->conn, args->replyfile);
-        snprintf(sendbuffer, CF_BUFSIZE, "%s", CF_FAILEDSTR);
+        snprintf(sendbuffer, sizeof(sendbuffer), "%s", CF_FAILEDSTR);
         if (ConnectionInfoProtocolVersion(conn_info) == CF_PROTOCOL_CLASSIC)
         {
             SendSocketStream(ConnectionInfoSocket(conn_info), sendbuffer, args->buf_size);
@@ -437,7 +437,7 @@ void CfGetFile(ServerFileGetState *args)
     {
         Log(LOG_LEVEL_ERR, "Open error of file '%s'. (open: %s)",
             filename, GetErrorStr());
-        snprintf(sendbuffer, CF_BUFSIZE, "%s", CF_FAILEDSTR);
+        snprintf(sendbuffer, sizeof(sendbuffer), "%s", CF_FAILEDSTR);
         if (ConnectionInfoProtocolVersion(conn_info) == CF_PROTOCOL_CLASSIC)
         {
             SendSocketStream(ConnectionInfoSocket(conn_info), sendbuffer, args->buf_size);
@@ -458,7 +458,7 @@ void CfGetFile(ServerFileGetState *args)
 
         while (true)
         {
-            memset(sendbuffer, 0, CF_BUFSIZE);
+            memset(sendbuffer, 0, sizeof(sendbuffer));
 
             Log(LOG_LEVEL_DEBUG, "Now reading from disk...");
 
@@ -490,7 +490,7 @@ void CfGetFile(ServerFileGetState *args)
 
                 if (sb.st_size != savedlen)
                 {
-                    snprintf(sendbuffer, CF_BUFSIZE, "%s%s: %s", CF_CHANGEDSTR1, CF_CHANGEDSTR2, filename);
+                    snprintf(sendbuffer, sizeof(sendbuffer), "%s%s: %s", CF_CHANGEDSTR1, CF_CHANGEDSTR2, filename);
 
                     if (ConnectionInfoProtocolVersion(conn_info) == CF_PROTOCOL_CLASSIC)
                     {
@@ -606,7 +606,7 @@ void CfEncryptGetFile(ServerFileGetState *args)
 
         while (true)
         {
-            memset(sendbuffer, 0, CF_BUFSIZE);
+            memset(sendbuffer, 0, sizeof(sendbuffer));
 
             if ((n_read = read(fd, sendbuffer, blocksize)) == -1)
             {

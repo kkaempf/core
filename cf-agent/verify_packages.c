@@ -3176,7 +3176,7 @@ static void DeletePackageManagers(PackageManager *np)
 
 const char *PrefixLocalRepository(const Rlist *repositories, const char *package)
 {
-    static char quotedPath[CF_MAXVARSIZE]; /* GLOBAL_R, no need to initialize */
+    static char quotedPath[CF_BUFSIZE * 2]; /* GLOBAL_R, no need to initialize */
     struct stat sb;
     char path[CF_BUFSIZE];
 

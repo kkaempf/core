@@ -1132,7 +1132,7 @@ functionid:            IDSYNTAX
                      | NAKEDVAR
                        {
                            ParserDebug("\tP:%s:%s:%s:%s function nakedvar = %s\n", P.block, P.blocktype, P.blockid, P.currentclasses ? P.currentclasses : "any", P.currentstring);
-                           strncpy(P.currentid,P.currentstring,CF_MAXVARSIZE); // Make a var look like an ID
+                           strncpy(P.currentid,P.currentstring,CF_MAXVARSIZE-1); // Make a var look like an ID
                            free(P.currentstring);
                            P.currentstring = NULL;
                        }

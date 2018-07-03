@@ -55,7 +55,7 @@ long LASTSEENEXPIREAFTER = SECONDS_PER_WEEK; /* GLOBAL_P */
 bool DONTDO = false; /* GLOBAL_A */
 
 /* NB! Check use before changing sizes */
-char VFQNAME[CF_MAXVARSIZE] = ""; /* GLOBAL_E GLOBAL_P */
+char VFQNAME[CF_BUFSIZE] = ""; /* GLOBAL_E GLOBAL_P */
 char VUQNAME[CF_MAXVARSIZE] = ""; /* GLOBAL_E */
 char VDOMAIN[CF_MAXVARSIZE] = ""; /* GLOBAL_E GLOBAL_P */
 

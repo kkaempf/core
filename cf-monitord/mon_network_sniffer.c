@@ -210,7 +210,7 @@ static void IncrementCounter(Item **list, char *name)
 
 static void AnalyzeArrival(Item *ip_addresses, long iteration, char *arrival, double *cf_this)
 {
-    char src[CF_BUFSIZE], dest[CF_BUFSIZE], flag = '.', *arr;
+    char src[CF_BUFSIZE], dest[CF_BUFSIZE * 2], flag = '.', *arr;
     int isme_dest, isme_src;
 
     src[0] = dest[0] = '\0';
@@ -387,11 +387,11 @@ static void AnalyzeArrival(Item *ip_addresses, long iteration, char *arrival, do
 
         if (strstr(arrival, ".138"))
         {
-            snprintf(dest, CF_BUFSIZE - 1, "%s NETBIOS", src);
+            snprintf(dest, sizeof(dest) - 1, "%s NETBIOS", src);
         }
         else if (strstr(arrival, ".2049"))
         {
-            snprintf(dest, CF_BUFSIZE - 1, "%s NFS", src);
+            snprintf(dest, sizeof(dest) - 1, "%s NFS", src);
         }
         else
         {

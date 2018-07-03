@@ -221,7 +221,7 @@ static PromiseResult VerifySQLPromise(EvalContext *ctx, Attributes a, const Prom
     }
     else
     {
-        snprintf(query, CF_MAXVARSIZE - 1, "%s.%s", database, table);
+        snprintf(query, sizeof(query) - 1, "%s.%s", database, table);
 
         if (VerifyTablePromise(ctx, &cfdb, query, a.database.columns, a, pp, &result))
         {
@@ -300,7 +300,7 @@ static int VerifyDatabasePromise(CfdbConn *cfdb, char *database, Attributes a)
         if (((a.transaction.action) != cfa_warn) && (!DONTDO))
         {
             Log(LOG_LEVEL_VERBOSE, "Attempting to delete the database '%s'", database);
-            snprintf(query, CF_MAXVARSIZE - 1, "drop database %s", database);
+            snprintf(query, sizeof(query) - 1, "drop database %s", database);
             CfVoidQueryDB(cfdb, query);
             return cfdb->result;
         }
@@ -316,7 +316,7 @@ static int VerifyDatabasePromise(CfdbConn *cfdb, char *database, Attributes a)
         if (((a.transaction.action) != cfa_warn) && (!DONTDO))
         {
             Log(LOG_LEVEL_VERBOSE, "Attempting to create the database '%s'", database);
-            snprintf(query, CF_MAXVARSIZE - 1, "create database %s", database);
+            snprintf(query, sizeof(query) - 1, "create database %s", database);
             CfVoidQueryDB(cfdb, query);
             return cfdb->result;
         }
@@ -499,7 +499,7 @@ static int ValidateRegistryPromiser(char *key, const Promise *pp)
 static int VerifyTablePromise(EvalContext *ctx, CfdbConn *cfdb, char *table_path, Rlist *columns, Attributes a,
                               const Promise *pp, PromiseResult *result)
 {
-    char name[CF_MAXVARSIZE], type[CF_MAXVARSIZE], query[CF_MAXVARSIZE], table[CF_MAXVARSIZE], db[CF_MAXVARSIZE];
+    char name[CF_MAXVARSIZE], type[CF_MAXVARSIZE], query[CF_BUFSIZE], table[CF_MAXVARSIZE], db[CF_MAXVARSIZE];
     int i, count, size, no_of_cols, *size_table, *done, identified, retval = true;
     char **name_table, **type_table;
 
@@ -670,12 +670,12 @@ static int VerifyTablePromise(EvalContext *ctx, CfdbConn *cfdb, char *table_path
                 {
                     if (size_table[i] > 0)
                     {
-                        snprintf(query, CF_MAXVARSIZE - 1, "ALTER TABLE %s ADD %s %s(%d)", table, name_table[i],
+                        snprintf(query, sizeof(query) - 1, "ALTER TABLE %s ADD %s %s(%d)", table, name_table[i],
                                  type_table[i], size_table[i]);
                     }
                     else
                     {
-                        snprintf(query, CF_MAXVARSIZE - 1, "ALTER TABLE %s ADD %s %s", table, name_table[i],
+                        snprintf(query, sizeof(query) - 1, "ALTER TABLE %s ADD %s %s", table, name_table[i],
                                  type_table[i]);
                     }
 
@@ -742,7 +742,7 @@ static int CreateTableColumns(CfdbConn *cfdb, char *table, Rlist *columns)
 
     if (no_of_cols > 0)
     {
-        snprintf(query, CF_BUFSIZE - 1, "create table %s(", table);
+        snprintf(query, sizeof(query) - 1, "create table %s(", table);
 
         for (i = 0; i < no_of_cols; i++)
         {
@@ -781,7 +781,7 @@ static int CreateTableColumns(CfdbConn *cfdb, char *table, Rlist *columns)
 static Rlist *GetSQLTables(CfdbConn *cfdb)
 {
     Rlist *list = NULL;
-    char query[CF_MAXVARSIZE];
+    char query[CF_BUFSIZE];
 
     ListTables(cfdb->type, query);
 
@@ -870,7 +870,7 @@ static int ValidateSQLTableName(char *table_path, char *db, char *table)
 
 static void QueryTableColumns(char *s, char *db, char *table)
 {
-    snprintf(s, CF_MAXVARSIZE - 1,
+    snprintf(s, CF_BUFSIZE - 1,
              "SELECT column_name,data_type,character_maximum_length FROM information_schema.columns WHERE table_name ='%s' AND table_schema = '%s'",
              table, db);
 }
